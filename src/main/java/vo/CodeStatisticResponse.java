@@ -14,7 +14,29 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CodeStatisticResponse {
-    private int rowCount;
-    private int noteRowCount;
+    /**
+     * 文件名
+     */
+    private String fileName;
+    /**
+     * 代码行数
+     */
+    private int codeLines;
+    /**
+     * 注释行数
+     */
+    private int noteLines;
+
+    /**
+     * 待搜索字符
+     */
+    private String key;
+    /**
+     * 字符出现次数
+     */
     private int keyAppearCount;
+    /**
+     * 空白行数
+     */
+    private int blackLines;
 }
