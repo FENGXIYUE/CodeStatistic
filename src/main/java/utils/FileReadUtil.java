@@ -57,7 +57,7 @@ public class FileReadUtil {
                 temp = temp.trim();
                 // 匹配空行
                 if (StringUtils.isBlank(temp)) {
-                    System.out.println("空白行为："+result.getCodeLines());
+                    System.out.println("空白行为：" + result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
                 } else if (temp.startsWith("//")) {
                     result.setNoteLines(result.getNoteLines() + 1);
@@ -75,8 +75,8 @@ public class FileReadUtil {
             }
             in.close();
             int oldLength = content.toString().length();
-            int newLength = content.toString().replaceAll(code, "EMPTY").length();
-            int countAppear = (newLength - oldLength) / (5 - code.length());
+            int newLength = content.toString().replaceAll(code, code + "@").length();
+            int countAppear = newLength - oldLength;
             result.setKeyAppearCount(countAppear);
 
             return result;
