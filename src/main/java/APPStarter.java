@@ -1,5 +1,7 @@
+import cn.hutool.core.io.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import utils.FileReadUtil;
+import vo.CodeStatisticResponse;
 
 import java.util.Scanner;
 
@@ -25,19 +27,27 @@ public class APPStarter {
             if ("1".equals(inputLine)) {
                 System.out.println("请输入文件路径");
                 String fileUri = scanner.nextLine();
-                while(!FileReadUtil.checkUri(fileUri)){
+                while (!FileReadUtil.checkUri(fileUri)) {
                     System.out.println("文件路径错误,请输入正确文件路径");
                     fileUri = scanner.nextLine();
                 }
                 // /Users/liulongtao/IdeaProjects/CodeStatistic/README.md
                 System.out.println("请输入待统计的字符");
                 String code = scanner.nextLine();
-                while(StringUtils.isBlank(fileUri)){
+                while (StringUtils.isBlank(fileUri)) {
                     System.out.println("待统计字符为空,请输入正确字符");
                     code = scanner.nextLine();
                 }
                 System.out.println("正在统计,请稍等:");
-                System.out.println("统计结果为:");
+
+                CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(fileUri)).key(code).build();
+                System.out.println(result.toString());
+                //休眠1秒，等待用户下次选择
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 System.out.println("\r\n" + "请输入对应编码"
                         + "\r\n" + "1 统计代码"
                         + "\r\n" + "2 需要退出程序");
