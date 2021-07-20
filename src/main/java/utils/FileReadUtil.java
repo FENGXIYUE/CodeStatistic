@@ -11,7 +11,7 @@ import java.io.File;
  * @modified By
  */
 public class FileReadUtil {
-    public boolean checkUri(String uri) {
+    public static boolean checkUri(String uri) {
         //判断传入的uri路径是否合法
         if (StringUtils.isBlank(uri)) {
             return false;
