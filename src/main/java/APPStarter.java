@@ -22,9 +22,7 @@ public class APPStarter {
             String inputLine = scanner.nextLine();
             if ("2".equals(inputLine)) {
                 break;
-            }
-            //输入为文件路径
-            if ("1".equals(inputLine)) {
+            }else if ("1".equals(inputLine)) {
                 System.out.println("请输入文件路径");
                 String fileUri = scanner.nextLine();
                 while (!FileReadUtil.checkUri(fileUri)) {
@@ -39,15 +37,18 @@ public class APPStarter {
                     code = scanner.nextLine();
                 }
                 System.out.println("正在统计,请稍等:");
-
-                CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(fileUri)).key(code).build();
-                System.out.println(result.toString());
+///Users/liulongtao/IdeaProjects/CodeStatistic/src/main/java/utils/FileReadUtil.java
+                System.out.println(FileReadUtil.readFileContent(fileUri, code).toString());
                 //休眠1秒，等待用户下次选择
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println("\r\n" + "请输入对应编码"
+                        + "\r\n" + "1 统计代码"
+                        + "\r\n" + "2 需要退出程序");
+            }else {
                 System.out.println("\r\n" + "请输入对应编码"
                         + "\r\n" + "1 统计代码"
                         + "\r\n" + "2 需要退出程序");

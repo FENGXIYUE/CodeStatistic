@@ -1,6 +1,8 @@
 package utils;
 
+import cn.hutool.core.io.FileUtil;
 import org.apache.commons.lang3.StringUtils;
+import vo.CodeStatisticResponse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,7 +32,8 @@ public class FileReadUtil {
         if (!file.exists() || !file.isFile()) {
             return false;
         }
-        return true;//返回文件大小
+        //返回文件大小
+        return true;
     }
 
     /**
@@ -39,15 +42,38 @@ public class FileReadUtil {
      * @param uri
      * @return
      */
-    public static String readFileContent(String uri) {
+    public static CodeStatisticResponse readFileContent(String uri,String code) {
         try {
-            BufferedReader in = new BufferedReader(new FileReader("runoob.txt"));
+            CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
+            boolean multilineCommentFlag = false;
+            BufferedReader in = new BufferedReader(new FileReader(uri));
             StringBuffer content = new StringBuffer();
+            String temp = "";
             while (in.ready()) {
-                content.append(in.readLine());
+                temp = in.readLine();
+                result.setCodeLines(result.getCodeLines()+1);
+                content.append(temp);
+                // 除去注释前的空格
+                temp = temp.trim();
+                // 匹配空行
+                if (StringUtils.isBlank(temp)) {
+                   result.setBlackLines(result.getBlackLines()+1);
+                } else if (temp.startsWith("//")) {
+                    result.setNoteLines(result.getNoteLines()+1);
+                } else if (temp.startsWith("/*") && !temp.endsWith("*/")) {
+                    result.setNoteLines(result.getNoteLines()+1);
+                    multilineCommentFlag = true;
+                } else if (temp.startsWith("/*") && temp.endsWith("*/")) {
+                    result.setNoteLines(result.getNoteLines()+1);
+                } else if (multilineCommentFlag == true) {
+                    result.setNoteLines(result.getNoteLines()+1);
+                    if (temp.endsWith("*/")) {
+                        multilineCommentFlag = false;
+                    }
+                }
             }
             in.close();
-            return content.toString();
+            return result;
         } catch (IOException e) {
             System.out.println("文件读取异常");
         }
