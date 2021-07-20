@@ -42,7 +42,7 @@ public class FileReadUtil {
      * @param uri
      * @return
      */
-    public static CodeStatisticResponse readFileContent(String uri,String code) {
+    public static CodeStatisticResponse readFileContent(String uri, String code) {
         try {
             CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
             boolean multilineCommentFlag = false;
@@ -51,28 +51,33 @@ public class FileReadUtil {
             String temp = "";
             while (in.ready()) {
                 temp = in.readLine();
-                result.setCodeLines(result.getCodeLines()+1);
+                result.setCodeLines(result.getCodeLines() + 1);
                 content.append(temp);
                 // 除去注释前的空格
                 temp = temp.trim();
                 // 匹配空行
                 if (StringUtils.isBlank(temp)) {
-                   result.setBlackLines(result.getBlackLines()+1);
+                    result.setBlackLines(result.getBlackLines() + 1);
                 } else if (temp.startsWith("//")) {
-                    result.setNoteLines(result.getNoteLines()+1);
+                    result.setNoteLines(result.getNoteLines() + 1);
                 } else if (temp.startsWith("/*") && !temp.endsWith("*/")) {
-                    result.setNoteLines(result.getNoteLines()+1);
+                    result.setNoteLines(result.getNoteLines() + 1);
                     multilineCommentFlag = true;
                 } else if (temp.startsWith("/*") && temp.endsWith("*/")) {
-                    result.setNoteLines(result.getNoteLines()+1);
+                    result.setNoteLines(result.getNoteLines() + 1);
                 } else if (multilineCommentFlag == true) {
-                    result.setNoteLines(result.getNoteLines()+1);
+                    result.setNoteLines(result.getNoteLines() + 1);
                     if (temp.endsWith("*/")) {
                         multilineCommentFlag = false;
                     }
                 }
             }
             in.close();
+            int oldLength = content.toString().length();
+            int newLength = content.toString().replaceAll(code, "EMPTY").length();
+            int countAppear = (newLength - oldLength) / (5 - code.length());
+            result.setKeyAppearCount(countAppear);
+
             return result;
         } catch (IOException e) {
             System.out.println("文件读取异常");
