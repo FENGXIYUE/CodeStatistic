@@ -57,6 +57,7 @@ public class FileReadUtil {
                 temp = temp.trim();
                 // 匹配空行
                 if (StringUtils.isBlank(temp)) {
+                    System.out.println("空白行为："+result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
                 } else if (temp.startsWith("//")) {
                     result.setNoteLines(result.getNoteLines() + 1);
