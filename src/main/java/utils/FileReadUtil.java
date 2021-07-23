@@ -45,30 +45,35 @@ public class FileReadUtil {
     public static CodeStatisticResponse readFileContent(String uri, String code) {
         try {
             CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
+            //多行注释的标志 以/*开头
             boolean multilineCommentFlag = false;
+            //文件读入流
             BufferedReader in = new BufferedReader(new FileReader(uri));
-            StringBuffer content = new StringBuffer();
-            String temp = "";
+            //记录文件内容
+            StringBuilder content = new StringBuilder();
+            //记录缓冲行
+            String tempLine = StringUtils.EMPTY;
             while (in.ready()) {
-                temp = in.readLine();
+                tempLine = in.readLine();
+                //总行数加1
                 result.setCodeLines(result.getCodeLines() + 1);
-                content.append(temp);
+                content.append(tempLine);
                 // 除去注释前的空格
-                temp = temp.trim();
+                tempLine = tempLine.trim();
                 // 匹配空行
-                if (StringUtils.isBlank(temp)) {
+                if (StringUtils.isBlank(tempLine)) {
                     System.out.println("空白行为：" + result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
-                } else if (temp.startsWith("//")) {
+                } else if (tempLine.startsWith("//")) {
                     result.setNoteLines(result.getNoteLines() + 1);
-                } else if (temp.startsWith("/*") && !temp.endsWith("*/")) {
+                } else if (tempLine.startsWith("/*") && !tempLine.endsWith("*/")) {
                     result.setNoteLines(result.getNoteLines() + 1);
                     multilineCommentFlag = true;
-                } else if (temp.startsWith("/*") && temp.endsWith("*/")) {
+                } else if (tempLine.startsWith("/*") && tempLine.endsWith("*/")) {
                     result.setNoteLines(result.getNoteLines() + 1);
                 } else if (multilineCommentFlag == true) {
                     result.setNoteLines(result.getNoteLines() + 1);
-                    if (temp.endsWith("*/")) {
+                    if (tempLine.endsWith("*/")) {
                         multilineCommentFlag = false;
                     }
                 }
