@@ -22,6 +22,7 @@ public class FileReadUtil {
      * @param uri
      * @return
      */
+    private static String JAVA = "java";
     public static boolean checkUri(String uri) {
         //判断传入的uri路径是否合法
         if (StringUtils.isBlank(uri)) {
@@ -30,6 +31,10 @@ public class FileReadUtil {
         File file = new File(uri);
         //判断文件是否存在以及对应的路径下是否为文件而不是文件夹
         if (!file.exists() || !file.isFile()) {
+            return false;
+        }
+        //判断是否为java文件
+        if(!JAVA.equals(FileUtil.getType(file))){
             return false;
         }
         //返回文件大小

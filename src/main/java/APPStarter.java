@@ -34,8 +34,7 @@ public class APPStarter {
                     System.out.println("待统计字符为空,请输入正确字符");
                     code = scanner.nextLine();
                 }
-                System.out.println("正在统计,请稍等:");
-
+                System.out.println("统计结果为:");
                 System.out.println(FileReadUtil.readFileContent(fileUri, code).toString());
                 //休眠1秒，等待用户下次选择
                 try {
