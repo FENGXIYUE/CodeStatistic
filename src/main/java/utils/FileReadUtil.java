@@ -43,16 +43,16 @@ public class FileReadUtil {
      * @return
      */
     public static CodeStatisticResponse readFileContent(String uri, String code) {
+        CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
+        //记录文件内容
+        StringBuilder content = new StringBuilder();
+        //记录缓冲行
+        String tempLine = StringUtils.EMPTY;
+        //多行注释的标志 以/*开头
+        boolean multilineCommentFlag = false;
         try {
-            CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
-            //多行注释的标志 以/*开头
-            boolean multilineCommentFlag = false;
             //文件读入流
             BufferedReader in = new BufferedReader(new FileReader(uri));
-            //记录文件内容
-            StringBuilder content = new StringBuilder();
-            //记录缓冲行
-            String tempLine = StringUtils.EMPTY;
             while (in.ready()) {
                 tempLine = in.readLine();
                 //总行数加1
@@ -64,30 +64,46 @@ public class FileReadUtil {
                 if (StringUtils.isBlank(tempLine)) {
                     System.out.println("空白行为：" + result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
+                    //匹配单行注释
                 } else if (tempLine.startsWith("//")) {
                     result.setNoteLines(result.getNoteLines() + 1);
+                    //匹配多行注释，注释内容在多行
                 } else if (tempLine.startsWith("/*") && !tempLine.endsWith("*/")) {
                     result.setNoteLines(result.getNoteLines() + 1);
                     multilineCommentFlag = true;
+                    //匹配多行注释，注释内容在一行
                 } else if (tempLine.startsWith("/*") && tempLine.endsWith("*/")) {
                     result.setNoteLines(result.getNoteLines() + 1);
-                } else if (multilineCommentFlag == true) {
+                    //多行注释，注释行数加1
+                } else if (multilineCommentFlag) {
                     result.setNoteLines(result.getNoteLines() + 1);
+                    //多行解释结尾
                     if (tempLine.endsWith("*/")) {
                         multilineCommentFlag = false;
                     }
                 }
             }
             in.close();
-            int oldLength = content.toString().length();
-            int newLength = content.toString().replaceAll(code, code + "@").length();
-            int countAppear = newLength - oldLength;
-            result.setKeyAppearCount(countAppear);
-
-            return result;
         } catch (IOException e) {
             System.out.println("文件读取异常");
         }
-        return null;
+        int countAppear = getCountAppear(code, content);
+        result.setKeyAppearCount(countAppear);
+        return result;
+    }
+
+
+    /**
+     * 计算String中,指定字符出现次数
+     *
+     * @param code
+     * @param content
+     * @return
+     */
+    private static int getCountAppear(String code, StringBuilder content) {
+        int oldLength = content.toString().length();
+        int newLength = content.toString().replaceAll(code, code + "@").length();
+        int countAppear = newLength - oldLength;
+        return countAppear;
     }
 }
