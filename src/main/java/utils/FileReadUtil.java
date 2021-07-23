@@ -44,7 +44,6 @@ public class FileReadUtil {
      */
     public static CodeStatisticResponse readFileContent(String uri, String code) {
         CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
-
         //记录缓冲行
         String tempLine = StringUtils.EMPTY;
         //多行注释的标志 以/*开头
@@ -54,35 +53,16 @@ public class FileReadUtil {
             BufferedReader in = new BufferedReader(new FileReader(uri));
             while (in.ready()) {
                 tempLine = in.readLine();
-                //总行数加1
+                //统计总行数
                 result.setCodeLines(result.getCodeLines() + 1);
-
-                if (tempLine.contains(code)) {
-                    //字符出现次数加1
-                    result.setKeyAppearCount(result.getKeyAppearCount() + 1);
-                    //字符所在位置更新
-                    result.getPositionRecord().add("java:" + result.getCodeLines());
-                }
-
-                // 除去注释前的空格
-                tempLine = tempLine.trim();
-                // 匹配空行
-                if (StringUtils.isBlank(tempLine)) {
+                //统计字符出现次数
+                getCodeAppearCount(code, result, tempLine);
+                if (StringUtils.isNotBlank(tempLine)) {
+                    //统计注释行数
+                    multilineCommentFlag = getNotesLines(result, tempLine, multilineCommentFlag);
+                } else {
+                    //统计空白行
                     result.setBlackLines(result.getBlackLines() + 1);
-                    //匹配单行注释 "//" 或 多行注释在一行
-                } else if (tempLine.startsWith("//") || (tempLine.startsWith("/*") && tempLine.endsWith("*/"))) {
-                    result.setNoteLines(result.getNoteLines() + 1);
-                    //匹配多行注释，注释内容在多行
-                } else if (tempLine.startsWith("/*") && !tempLine.endsWith("*/")) {
-                    result.setNoteLines(result.getNoteLines() + 1);
-                    multilineCommentFlag = true;
-                    //匹配多行注释，每行注释加1
-                } else if (multilineCommentFlag) {
-                    result.setNoteLines(result.getNoteLines() + 1);
-                    //多行解释结尾
-                    if (tempLine.endsWith("*/")) {
-                        multilineCommentFlag = false;
-                    }
                 }
             }
             in.close();
@@ -90,6 +70,51 @@ public class FileReadUtil {
             System.err.println("文件读取异常");
         }
         return result;
+    }
+
+    /**
+     * 统计注释行数
+     *
+     * @param result
+     * @param tempLine
+     * @param multilineCommentFlag
+     * @return
+     */
+    private static boolean getNotesLines(CodeStatisticResponse result, String tempLine, boolean multilineCommentFlag) {
+        // 除去注释前的空格
+        tempLine = tempLine.trim();
+        //匹配单行注释 "//" 或 多行注释在一行
+        if (tempLine.startsWith("//") || (tempLine.startsWith("/*") && tempLine.endsWith("*/"))) {
+            result.setNoteLines(result.getNoteLines() + 1);
+            //匹配多行注释，注释内容在多行
+        } else if (tempLine.startsWith("/*") && !tempLine.endsWith("*/")) {
+            result.setNoteLines(result.getNoteLines() + 1);
+            multilineCommentFlag = true;
+            //匹配多行注释，每行注释加1
+        } else if (multilineCommentFlag) {
+            result.setNoteLines(result.getNoteLines() + 1);
+            //多行解释结尾
+            if (tempLine.endsWith("*/")) {
+                multilineCommentFlag = false;
+            }
+        }
+        return multilineCommentFlag;
+    }
+
+    /**
+     * 统计字符出现次数
+     *
+     * @param code
+     * @param result
+     * @param tempLine
+     */
+    private static void getCodeAppearCount(String code, CodeStatisticResponse result, String tempLine) {
+        if (tempLine.contains(code)) {
+            //字符出现次数加1
+            result.setKeyAppearCount(result.getKeyAppearCount() + 1);
+            //字符所在位置更新
+            result.getPositionRecord().add("java:" + result.getCodeLines());
+        }
     }
 
 }
