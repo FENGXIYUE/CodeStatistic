@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author: LLT
  * @description:
@@ -44,13 +46,21 @@ public class CodeStatisticResponse {
      */
     private int keyAppearCount;
 
+    /**
+     * 字符出现位置 行，列
+     */
+    private
+    List<String> positionRecord;
+
     @Override
-    public String toString(){
+    public String toString() {
         return "统计文件：" + this.fileName
-                +"\r\n"+"代码行数：" + this.codeLines
-                +"\r\n"+"注释行数：" + this.noteLines
-                +"\r\n"+"空白行数：" + this.blackLines
-                +"\r\n"+"查找字符：" + this.key
-                +"\r\n"+"字符出现次数：" + this.keyAppearCount;
+                + "\r\n" + "代码行数：" + this.codeLines
+                + "\r\n" + "注释行数：" + this.noteLines
+                + "\r\n" + "空白行数：" + this.blackLines
+                + "\r\n" + "查找字符：" + this.key
+                + "\r\n" + "字符出现次数：" + this.keyAppearCount
+                + "\r\n" + "字符出现位置：" + this.positionRecord;
+
     }
 }

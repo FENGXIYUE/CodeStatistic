@@ -44,8 +44,7 @@ public class FileReadUtil {
      */
     public static CodeStatisticResponse readFileContent(String uri, String code) {
         CodeStatisticResponse result = CodeStatisticResponse.builder().fileName(FileUtil.getName(uri)).key(code).build();
-        //记录文件内容
-        StringBuilder content = new StringBuilder();
+
         //记录缓冲行
         String tempLine = StringUtils.EMPTY;
         //多行注释的标志 以/*开头
@@ -57,7 +56,14 @@ public class FileReadUtil {
                 tempLine = in.readLine();
                 //总行数加1
                 result.setCodeLines(result.getCodeLines() + 1);
-                content.append(tempLine);
+
+                if (tempLine.contains(code)) {
+                    //字符出现次数加1
+                    result.setKeyAppearCount(result.getKeyAppearCount() + 1);
+                    //字符所在位置更新
+                    result.getPositionRecord().add("java:" + result.getCodeLines());
+                }
+
                 // 除去注释前的空格
                 tempLine = tempLine.trim();
                 // 匹配空行
@@ -84,23 +90,7 @@ public class FileReadUtil {
         } catch (IOException e) {
             System.err.println("文件读取异常");
         }
-        //字符出现次数
-        result.setKeyAppearCount(getCountAppear(code, content));
         return result;
     }
 
-
-    /**
-     * 计算String中,指定字符出现次数
-     *
-     * @param code
-     * @param content
-     * @return
-     */
-    private static int getCountAppear(String code, StringBuilder content) {
-        int oldLength = content.toString().length();
-        int newLength = content.toString().replaceAll(code, code + "@").length();
-        int countAppear = newLength - oldLength;
-        return countAppear;
-    }
 }
