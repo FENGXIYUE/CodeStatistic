@@ -68,7 +68,6 @@ public class FileReadUtil {
                 tempLine = tempLine.trim();
                 // 匹配空行
                 if (StringUtils.isBlank(tempLine)) {
-                    System.out.println("空白行为：" + result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
                     //匹配单行注释 "//" 或 多行注释在一行
                 } else if (tempLine.startsWith("//") || (tempLine.startsWith("/*") && tempLine.endsWith("*/"))) {

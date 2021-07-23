@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.assertj.core.util.Lists;
 
 import java.util.List;
 
@@ -49,8 +50,8 @@ public class CodeStatisticResponse {
     /**
      * 字符出现位置 行，列
      */
-    private
-    List<String> positionRecord;
+    @Builder.Default
+    private List<String> positionRecord = Lists.newArrayList();
 
     @Override
     public String toString() {
