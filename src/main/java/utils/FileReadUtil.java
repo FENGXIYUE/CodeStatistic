@@ -64,17 +64,14 @@ public class FileReadUtil {
                 if (StringUtils.isBlank(tempLine)) {
                     System.out.println("空白行为：" + result.getCodeLines());
                     result.setBlackLines(result.getBlackLines() + 1);
-                    //匹配单行注释
-                } else if (tempLine.startsWith("//")) {
+                    //匹配单行注释 "//" 或 多行注释在一行
+                } else if (tempLine.startsWith("//") || (tempLine.startsWith("/*") && tempLine.endsWith("*/"))) {
                     result.setNoteLines(result.getNoteLines() + 1);
                     //匹配多行注释，注释内容在多行
                 } else if (tempLine.startsWith("/*") && !tempLine.endsWith("*/")) {
                     result.setNoteLines(result.getNoteLines() + 1);
                     multilineCommentFlag = true;
-                    //匹配多行注释，注释内容在一行
-                } else if (tempLine.startsWith("/*") && tempLine.endsWith("*/")) {
-                    result.setNoteLines(result.getNoteLines() + 1);
-                    //多行注释，注释行数加1
+                    //匹配多行注释，每行注释加1
                 } else if (multilineCommentFlag) {
                     result.setNoteLines(result.getNoteLines() + 1);
                     //多行解释结尾
@@ -85,10 +82,10 @@ public class FileReadUtil {
             }
             in.close();
         } catch (IOException e) {
-            System.out.println("文件读取异常");
+            System.err.println("文件读取异常");
         }
-        int countAppear = getCountAppear(code, content);
-        result.setKeyAppearCount(countAppear);
+        //字符出现次数
+        result.setKeyAppearCount(getCountAppear(code, content));
         return result;
     }
 

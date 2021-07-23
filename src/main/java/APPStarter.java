@@ -1,7 +1,5 @@
-import cn.hutool.core.io.FileUtil;
 import org.apache.commons.lang3.StringUtils;
 import utils.FileReadUtil;
-import vo.CodeStatisticResponse;
 
 import java.util.Scanner;
 
@@ -22,14 +20,14 @@ public class APPStarter {
             String inputLine = scanner.nextLine();
             if ("2".equals(inputLine)) {
                 break;
-            }else if ("1".equals(inputLine)) {
+            } else if ("1".equals(inputLine)) {
                 System.out.println("请输入文件路径");
                 String fileUri = scanner.nextLine();
                 while (!FileReadUtil.checkUri(fileUri)) {
                     System.out.println("文件路径错误,请输入正确文件路径");
                     fileUri = scanner.nextLine();
                 }
-                // /Users/liulongtao/IdeaProjects/CodeStatistic/README.md
+
                 System.out.println("请输入待统计的字符");
                 String code = scanner.nextLine();
                 while (StringUtils.isBlank(fileUri)) {
@@ -37,18 +35,18 @@ public class APPStarter {
                     code = scanner.nextLine();
                 }
                 System.out.println("正在统计,请稍等:");
-///Users/liulongtao/IdeaProjects/CodeStatistic/src/main/java/utils/FileReadUtil.java
+
                 System.out.println(FileReadUtil.readFileContent(fileUri, code).toString());
                 //休眠1秒，等待用户下次选择
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println("\r\n" + "请输入对应编码"
                         + "\r\n" + "1 统计代码"
                         + "\r\n" + "2 需要退出程序");
-            }else {
+            } else {
                 System.out.println("\r\n" + "请输入对应编码"
                         + "\r\n" + "1 统计代码"
                         + "\r\n" + "2 需要退出程序");
