@@ -1,6 +1,7 @@
 package utils
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * @author: LLT* @description:
@@ -8,6 +9,9 @@ import spock.lang.Specification
  * @modified By
  */
 class FileReadUtilTest extends Specification {
+
+    //每个测试用例单独作为一个测试
+    @Unroll
     def "CheckUri"() {
         expect:
         result == FileReadUtil.checkUri(uri)
