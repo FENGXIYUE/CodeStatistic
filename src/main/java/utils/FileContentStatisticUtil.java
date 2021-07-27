@@ -48,8 +48,11 @@ public class FileContentStatisticUtil {
      */
     public static void getCodeAppearCount(String code, CodeStatisticResponse result, String tempLine) {
         if (tempLine.contains(code)) {
-            //字符出现次数加1
-            result.setKeyAppearCount(result.getKeyAppearCount() + 1);
+
+            //统计出现次数
+            int oldLength = tempLine.length();
+            int newLength = tempLine.replaceAll(code, code + "@").length();
+            result.setKeyAppearCount(result.getKeyAppearCount() + (newLength-oldLength));
             //字符所在位置更新
             result.getPositionRecord().add("java:" + result.getCodeLines());
         }
