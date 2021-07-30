@@ -55,7 +55,7 @@ public class FileReadUtil {
         //多行注释的标志 以/*开头
         boolean multilineCommentFlag = false;
         try {
-            //文件读入流
+            //文件读入流  Files工具类
             BufferedReader in = new BufferedReader(new FileReader(uri));
             while (in.ready()) {
                 tempLine = in.readLine();
